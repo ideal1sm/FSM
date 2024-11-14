@@ -1,0 +1,52 @@
+{# templates/order/transition.html.twig #}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order State Machine</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+<h1>Order State Machine</h1>
+
+<div class="card my-4">
+    <div class="card-body">
+        <h5 class="card-title">Order ID: {{ order.id }}</h5>
+        <p>Текущее состояние: <strong>{{ order.state }}</strong></p>
+    </div>
+</div>
+
+<h3>Доступные переходы</h3>
+{% if availableTransitions %}
+    <ul class="list-group my-3">
+        {% for transition in availableTransitions %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ transition }}</span>
+                <a href="{{ path('order_transition', { id: order.id, transition: transition }) }}"
+                   class="btn btn-primary">Применить</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Нет доступных переходов для текущего состояния</p>
+{% endif %}
+
+<h3>Недоступные переходы</h3>
+{% if unAvailableTransitions %}
+    <ul class="list-group my-3">
+        {% for transition in unAvailableTransitions %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ transition }}</span>
+                <a href="{{ path('order_transition', { id: order.id, transition: transition }) }}"
+                   class="btn btn-primary">Применить</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Нет доступных переходов для текущего состояния</p>
+{% endif %}
+
+<a href="{{ path('order_list') }}" class="btn btn-secondary mt-3">Назад к заказам</a>
+</body>
+</html>

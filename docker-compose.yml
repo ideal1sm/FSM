@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: symfony_user
+      POSTGRES_PASSWORD: symfony_pass
+      POSTGRES_DB: symfony_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - symfony_network
+
+volumes:
+  db_data:
+
+networks:
+  symfony_network:
