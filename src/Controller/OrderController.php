@@ -3,27 +3,31 @@
 namespace App\Controller;
 
 use App\Entity\Order;
-use App\Service\OrderWorkflowService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Workflow\Registry;
 
 class OrderController extends AbstractController
 {
     public function __construct(
-        private OrderWorkflowService $workflowService,
-        private EntityManagerInterface $entityManager
+    private Registry $workflowRegistry,
+    private EntityManagerInterface $entityManager
     ) {
+
     }
 
     #[Route(path: "/order/{id}", name: "order_show")]
     public function show(Order $order): Response
     {
+        $workflow = $this->workflowRegistry->get($order);
+
         // Получаем доступные переходы для текущего состояния заказа
         return $this->render('order/transition.html.twig', [
             'order' => $order,
-            'availableTransitions' => $this->workflowService->getEnabledTransitions($order)
+            'availableTransitions' => $workflow->getEnabledTransitions($order)
         ]);
     }
 
@@ -37,11 +41,23 @@ class OrderController extends AbstractController
         ]);
     }
 
+    #[Route("/order/{id}/confirm", name: "order_confirm")]
+    public function confirm(Order $order): RedirectResponse
+    {
+        $order->setConfirmed(true);
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('order_show', ['id' => $order->getId()]);
+    }
+
     #[Route(path: "/order/{id}/transition/{transition}", name: "order_transition")]
     public function transition(Order $order, string $transition): Response
     {
+        $workflow = $this->workflowRegistry->get($order);
+
         // Применяем переход к заказу
-        if ($this->workflowService->applyTransition($order, $transition)) {
+        if ($workflow->can($order, $transition)) {
+            $workflow->apply($order, $transition);
             $this->entityManager->flush();
             return new Response("Переход '{$transition}' выполнен успешно!");
         }

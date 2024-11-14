@@ -17,6 +17,9 @@ class Order
     #[ORM\Column(type: 'string', options: ['default' => 'created'])]
     private string $marking = 'created'; // Это маркировка для Symfony Workflow
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isConfirmed = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -30,6 +33,18 @@ class Order
     public function setMarking(string $marking = 'created'): Order
     {
         $this->marking = $marking;
+
+        return $this;
+    }
+
+    public function isConfirmed(): bool
+    {
+        return $this->isConfirmed;
+    }
+
+    public function setConfirmed(bool $confirmed): self
+    {
+        $this->isConfirmed = $confirmed;
 
         return $this;
     }

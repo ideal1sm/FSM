@@ -14,6 +14,11 @@
     <div class="card-body">
         <h5 class="card-title">Order ID: {{ order.id }}</h5>
         <p>Текущее состояние: <strong>{{ order.marking }}</strong></p>
+        <p>Подтверждено: <strong>{{ order.isConfirmed ? 'Да' : 'Нет' }}</strong></p>
+
+        {% if not order.isConfirmed %}
+            <a href="{{ path('order_confirm', { id: order.id }) }}" class="btn btn-warning">Подтвердить заказ</a>
+        {% endif %}
     </div>
 </div>
 
