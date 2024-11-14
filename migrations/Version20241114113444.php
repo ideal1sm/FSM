@@ -21,6 +21,7 @@ final class Version20241114113444 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE "order" ADD marking VARCHAR(255) NOT NULL');
+        $this->addSql('UPDATE "order" SET marking = \'created\'');
         $this->addSql('ALTER TABLE "order" DROP state');
     }
 
