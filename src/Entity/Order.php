@@ -14,7 +14,7 @@ class Order
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: 'string', options: ['default' => 'created'])]
     private string $marking = 'created'; // Это маркировка для Symfony Workflow
 
     public function getId(): ?int
