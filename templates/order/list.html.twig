@@ -14,7 +14,7 @@
     {% for order in orders %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
             Order ID: {{ order.id }}
-            <span>Состояние: {{ order.state }}</span>
+            <span>Состояние: {{ order.marking }}</span>
             <a href="{{ path('order_show', { id: order.id }) }}" class="btn btn-primary">Управлять</a>
         </li>
     {% endfor %}

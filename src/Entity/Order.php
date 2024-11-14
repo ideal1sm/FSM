@@ -14,23 +14,23 @@ class Order
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', options: ['default' => 'created'])]
-    private string $state = 'created';
+    #[ORM\Column(type: 'string')]
+    private string $marking = 'created'; // Это маркировка для Symfony Workflow
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getState(): string
+    public function getMarking(): string
     {
-        return $this->state;
+        return $this->marking;
     }
 
-    public function setState(string $state = 'created'): Order
+    public function setMarking(string $marking = 'created'): Order
     {
-        $this->state = $state;
+        $this->marking = $marking;
+
         return $this;
     }
-
 }

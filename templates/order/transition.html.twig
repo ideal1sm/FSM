@@ -13,7 +13,7 @@
 <div class="card my-4">
     <div class="card-body">
         <h5 class="card-title">Order ID: {{ order.id }}</h5>
-        <p>Текущее состояние: <strong>{{ order.state }}</strong></p>
+        <p>Текущее состояние: <strong>{{ order.marking }}</strong></p>
     </div>
 </div>
 
@@ -22,23 +22,8 @@
     <ul class="list-group my-3">
         {% for transition in availableTransitions %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>{{ transition }}</span>
-                <a href="{{ path('order_transition', { id: order.id, transition: transition }) }}"
-                   class="btn btn-primary">Применить</a>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>Нет доступных переходов для текущего состояния</p>
-{% endif %}
-
-<h3>Недоступные переходы</h3>
-{% if unAvailableTransitions %}
-    <ul class="list-group my-3">
-        {% for transition in unAvailableTransitions %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>{{ transition }}</span>
-                <a href="{{ path('order_transition', { id: order.id, transition: transition }) }}"
+                <span>{{ transition.name }}</span>
+                <a href="{{ path('order_transition', { id: order.id, transition: transition.name }) }}"
                    class="btn btn-primary">Применить</a>
             </li>
         {% endfor %}

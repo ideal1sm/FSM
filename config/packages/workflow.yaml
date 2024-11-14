@@ -1,0 +1,22 @@
+framework:
+    workflows:
+        order_process:
+            type: 'state_machine'  # Указываем, что это конечный автомат
+            supports:
+                - App\Entity\Order  # Сущность, к которой будет применяться автомат
+            initial_marking: created  # Начальное состояние
+            places:
+                - created
+                - paid
+                - shipped
+                - delivered
+            transitions:
+                pay:
+                    from: created
+                    to: paid
+                ship:
+                    from: paid
+                    to: shipped
+                deliver:
+                    from: shipped
+                    to: delivered

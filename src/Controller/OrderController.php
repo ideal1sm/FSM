@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Order;
-use App\StateMachine\OrderStateMachine;
+use App\Service\OrderWorkflowService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,13 +11,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class OrderController extends AbstractController
 {
-    private OrderStateMachine $stateMachine;
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(OrderStateMachine $stateMachine, EntityManagerInterface $entityManager)
-    {
-        $this->stateMachine = $stateMachine;
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private OrderWorkflowService $workflowService,
+        private EntityManagerInterface $entityManager
+    ) {
     }
 
     #[Route(path: "/order/{id}", name: "order_show")]
@@ -26,8 +23,7 @@ class OrderController extends AbstractController
         // Получаем доступные переходы для текущего состояния заказа
         return $this->render('order/transition.html.twig', [
             'order' => $order,
-            'availableTransitions' => $this->stateMachine->getAvailableTransitions($order->getState()),
-            'unAvailableTransitions' => $this->stateMachine->getUnAvailableTransitions($order->getState()),
+            'availableTransitions' => $this->workflowService->getEnabledTransitions($order)
         ]);
     }
 
@@ -45,7 +41,7 @@ class OrderController extends AbstractController
     public function transition(Order $order, string $transition): Response
     {
         // Применяем переход к заказу
-        if ($this->stateMachine->applyTransition($order, $transition)) {
+        if ($this->workflowService->applyTransition($order, $transition)) {
             $this->entityManager->flush();
             return new Response("Переход '{$transition}' выполнен успешно!");
         }
